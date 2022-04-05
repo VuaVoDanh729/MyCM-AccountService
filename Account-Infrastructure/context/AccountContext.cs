@@ -53,6 +53,5 @@ namespace AccountInfrastructure.context
 
         public DbSet<AccountHistory> AccountHistories { get; set; }
 
-
     }
 }
