@@ -1,5 +1,0 @@
-{
-  "ConnectionStrings": {
-    "AccountDatabase": "Server=(localdb)\\mssqllocaldb;Database=;Trusted_Connection=True;"
-  }
-}
