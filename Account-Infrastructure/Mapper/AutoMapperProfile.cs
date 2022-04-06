@@ -14,6 +14,7 @@ namespace Account_Infrastructure.Mapper
         public AutoMapperProfile()
         {
             CreateMap<Account, AccountViewModel>();
+            CreateMap<AccountViewModel, Account>();
         }
     }
 }

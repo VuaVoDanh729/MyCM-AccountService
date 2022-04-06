@@ -15,13 +15,13 @@ namespace Account_Infrastructure.Repositories.Account
 
         public Task<PaggingList<AccountViewModel>> ListAccount(int pageIdx, int pageSize);
 
-        public Task<HttpResponseMessage> AddAccount(AccountModel.models.Account account);
+        public Task<int> AddAccount(AccountModel.models.Account account);
 
-        public Task<HttpResponseMessage> UpdateAccount(AccountModel.models.Account account);
+        public Task<int> UpdateAccount(AccountModel.models.Account account);
 
-        public Task<HttpResponseMessage> DeleteAccount(AccountModel.models.Account account);
+        public Task<int> DeleteAccount(string id);
 
-        public Task<HttpResponseMessage> ChangePassword(AccountModel.models.Account account);
+        public Task<int> ChangePassword(string id, string old, string newPass);
 
     }
 }

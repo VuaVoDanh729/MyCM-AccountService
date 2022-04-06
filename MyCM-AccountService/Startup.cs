@@ -1,3 +1,4 @@
+using Account_Infrastructure.Repositories.Login;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +12,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using MediatR;
+using System.Reflection;
+using AccountInfrastructure.context;
+using MediatR.Pipeline;
+using Acount_Service.Features.Account;
+using Account_Infrastructure.Dtos;
+using Acount_Service;
+using Account_Infrastructure.Repositories.Account;
 
 namespace MyCM_AccountService
 {
@@ -28,10 +38,20 @@ namespace MyCM_AccountService
         {
 
             services.AddControllers();
+            ConfigDependencyInjection(services);
+            services.AddAutoMapper(typeof(Account_Infrastructure.Mapper.Anchor).Assembly);
+            services.AddMediatR(typeof(Anchor).Assembly);
+            services.AddDbContext<AccountContext>(option => option.UseSqlServer(Configuration.GetConnectionString("DatabaseConnection")));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyCM_AccountService", Version = "v1" });
             });
+        }
+
+        private void ConfigDependencyInjection(IServiceCollection services)
+        {
+            services.AddScoped<ILoginRepository, LoginRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -9,7 +9,7 @@ namespace Account_Infrastructure.Repositories.Login
 {
     public interface ILoginRepository
     {
-        public LoginToken Login(string username, string password);
+        public Task<LoginToken> Login(string username, string password);
 
         public string RefreshToken(string token);
 

@@ -32,7 +32,7 @@ namespace Account_Infrastructure.Repositories.Login
             throw new NotImplementedException();
         }
 
-        public LoginToken Login(string username, string password)
+        public async Task<LoginToken> Login(string username, string password)
         {
             string encrPass = PasswordEncrypt.EncryptPass(password);
             var account = _context.Accounts.FirstOrDefault(a => a.Username.Equals(username) && a.Password.Equals(password));
@@ -57,7 +57,7 @@ namespace Account_Infrastructure.Repositories.Login
             }
             else
             {
-                return new LoginToken("");
+                return new LoginToken("", false);
             }
         }
 

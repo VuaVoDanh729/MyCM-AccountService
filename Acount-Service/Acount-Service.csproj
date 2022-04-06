@@ -16,8 +16,4 @@
     <ProjectReference Include="..\Account-Model\Account-Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Account\Commands\" />
-  </ItemGroup>
-
 </Project>

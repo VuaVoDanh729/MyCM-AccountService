@@ -12,7 +12,7 @@ namespace Account_Infrastructure.Dtos.Authentication
 
         public bool IsSuccess { get; set; }
 
-        public LoginToken(string token, bool isSuccess = false)
+        public LoginToken(string token, bool isSuccess)
         {
             this.Token = token;
             this.IsSuccess = IsSuccess;

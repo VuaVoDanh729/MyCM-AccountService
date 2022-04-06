@@ -23,26 +23,49 @@ namespace Account_Infrastructure.Repositories.Account
             _mapper = mapper;
         }
 
-        public Task<HttpResponseMessage> AddAccount(AccountModel.models.Account account)
+        public async Task<int> AddAccount(AccountModel.models.Account account)
         {
-            throw new NotImplementedException();
+            _context.Add(account);
+            return await _context.SaveChangesAsync();
+
         }
 
-        public Task<HttpResponseMessage> ChangePassword(AccountModel.models.Account account)
+        public async Task<int> ChangePassword(string id, string old, string newPass)
         {
-            throw new NotImplementedException();
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id.Equals(id) && a.Password.Equals(old));
+            if(account is null)
+            {
+                return 0;
+            }
+            else
+            {
+                account.Password = newPass;
+                return await _context.SaveChangesAsync();
+            }
         }
 
-        public Task<HttpResponseMessage> DeleteAccount(AccountModel.models.Account account)
+        public async Task<int> DeleteAccount(string id)
         {
-            throw new NotImplementedException();
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id.Equals(id));
+            if (account is null)
+            {
+                return 0;
+            }
+            else
+            {
+                account.Status = 0;
+                return await _context.SaveChangesAsync();
+            }
+                
         }
 
         public async Task<PaggingList<AccountViewModel>> ListAccount(int pageIdx, int pageSize)
         {
             var totalRecord = await _context.Accounts.CountAsync();
             var selectAll = await  _context.Accounts.Skip((pageIdx - 1) * pageSize).Take(pageSize).Select(a => _mapper.Map<AccountViewModel>(a)).ToListAsync();
-            return new PaggingList<AccountViewModel>(pageIdx, pageSize, totalRecord, selectAll);
+
+            var result = selectAll.Select(a => _mapper.Map<AccountViewModel>(a)).ToList();
+            return new PaggingList<AccountViewModel>(pageIdx, pageSize, totalRecord, result);
         }
 
         public async Task<AccountViewModel> SelectAccountById(string id)
@@ -51,7 +74,7 @@ namespace Account_Infrastructure.Repositories.Account
             return _mapper.Map<AccountViewModel>(result);
         }
 
-        public Task<HttpResponseMessage> UpdateAccount(AccountModel.models.Account account)
+        public Task<int> UpdateAccount(AccountModel.models.Account account)
         {
             throw new NotImplementedException();
         }
