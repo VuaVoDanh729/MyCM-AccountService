@@ -1,4 +1,5 @@
 ﻿using Account_Infrastructure.Dtos.Account;
+using Acount_Service.Features.Account.Commands;
 using Acount_Service.Features.Account.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -43,6 +44,13 @@ namespace MyCM_AccountService.Controllers
                 PageSize = pageSize
             });
             return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddNewAccount(AddAccountCommand accountCommand)
+        {
+            var result = await _mediator.Send(accountCommand);
+            return result == 1 ? Ok() : StatusCode(406);
         }
     }
 }

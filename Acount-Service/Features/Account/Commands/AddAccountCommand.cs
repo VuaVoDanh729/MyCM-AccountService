@@ -1,4 +1,5 @@
 ﻿using Account_Infrastructure.Repositories.Account;
+using AccountModel.enums;
 using AutoMapper;
 using MediatR;
 using System;
@@ -29,9 +30,16 @@ namespace Acount_Service.Features.Account.Commands
             _accountRepo = accountRepo;
         }
 
-        public Task<int> Handle(AddAccountCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(AddAccountCommand request, CancellationToken cancellationToken)
         {
-            return _accountRepo.
+            return await _accountRepo.AddAccount(new AccountModel.models.Account
+            {
+                Id = Guid.NewGuid().ToString(),
+                Username = request.UserName,
+                Password = request.Password,
+                CreatedDate = DateTime.UtcNow,
+                Status = ActivityStatus.ACTIVE
+            });
         }
     }
 }
