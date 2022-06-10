@@ -1,6 +1,7 @@
 ﻿using Account_Infrastructure.Dtos;
 using Account_Infrastructure.Dtos.Account;
 using AccountInfrastructure.context;
+using AccountModel.enums;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -103,10 +104,10 @@ namespace Account_Infrastructure.Repositories.Account
             }      
         }
 
-        public async Task<PaggingList<AccountViewModel>> ListAccount(int pageIdx, int pageSize)
+        public async Task<PaggingList<AccountViewModel>> ListAccount(int pageIdx, int pageSize, ActivityStatus status)
         {
             var totalRecord = await _context.Accounts.CountAsync();
-            var selectAll = await  _context.Accounts.AsNoTracking().Skip((pageIdx - 1) * pageSize).Take(pageSize).Select(a => _mapper.Map<AccountViewModel>(a)).ToListAsync();
+            var selectAll = await  _context.Accounts.AsNoTracking().Where(a => a.Status == status).Skip((pageIdx - 1) * pageSize).Take(pageSize).Select(a => _mapper.Map<AccountViewModel>(a)).ToListAsync();
 
             var result = selectAll.Select(a => _mapper.Map<AccountViewModel>(a)).ToList();
             return new PaggingList<AccountViewModel>(pageIdx, pageSize, totalRecord, result);

@@ -1,6 +1,7 @@
 ﻿using Account_Infrastructure.Dtos;
 using Account_Infrastructure.Dtos.Account;
 using Account_Infrastructure.Repositories.Account;
+using AccountModel.enums;
 using AutoMapper;
 using MediatR;
 using System;
@@ -14,7 +15,7 @@ namespace Acount_Service.Features.Account.Queries
 {
     public class GetListAccountQuery : PagingRequest,IRequest<PaggingList<AccountViewModel>>
     {
-
+        public ActivityStatus Status { get; set; }
     }
 
     public class GetListAccountHandler : IRequestHandler<GetListAccountQuery, PaggingList<AccountViewModel>>
@@ -31,7 +32,7 @@ namespace Acount_Service.Features.Account.Queries
 
         public async Task<PaggingList<AccountViewModel>> Handle(GetListAccountQuery request, CancellationToken cancellationToken)
         {
-            var result = await _accountRepo.ListAccount(request.PageIdx, request.PageSize);
+            var result = await _accountRepo.ListAccount(request.PageIdx, request.PageSize, request.Status);
             return result;
         }
     }

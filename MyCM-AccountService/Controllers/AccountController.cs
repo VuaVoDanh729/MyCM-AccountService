@@ -1,4 +1,5 @@
 ﻿using Account_Infrastructure.Dtos.Account;
+using AccountModel.enums;
 using Acount_Service.Features.Account.Commands;
 using Acount_Service.Features.Account.Queries;
 using Acount_Service.Features.Account.Queries.Commands;
@@ -41,12 +42,13 @@ namespace MyCM_AccountService.Controllers
         }
 
         [HttpGet("accounts")]
-        public async Task<IActionResult> GetAccountsPagging(int pageSize, int pageIdx)
+        public async Task<IActionResult> GetAccountsPagging(int pageSize, int pageIdx, ActivityStatus status)
         {
             var result = await _mediator.Send(new GetListAccountQuery
             {
                 PageIdx = pageIdx,
-                PageSize = pageSize
+                PageSize = pageSize,
+                Status = status
             });
             return Ok(result);
         }

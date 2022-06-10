@@ -1,5 +1,6 @@
 ﻿using Account_Infrastructure.Dtos;
 using Account_Infrastructure.Dtos.Account;
+using AccountModel.enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Account_Infrastructure.Repositories.Account
     {
         public Task<AccountViewModel> SelectAccountById(string id);
 
-        public Task<PaggingList<AccountViewModel>> ListAccount(int pageIdx, int pageSize);
+        public Task<PaggingList<AccountViewModel>> ListAccount(int pageIdx, int pageSize, ActivityStatus status);
 
         public Task<int> AddAccount(AccountModel.models.Account account);
 

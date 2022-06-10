@@ -21,6 +21,7 @@ using Acount_Service.Features.Account;
 using Account_Infrastructure.Dtos;
 using Acount_Service;
 using Account_Infrastructure.Repositories.Account;
+using MyCM_AccountService.Midlewares;
 
 namespace MyCM_AccountService
 {
@@ -63,6 +64,8 @@ namespace MyCM_AccountService
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyCM_AccountService v1"));
             }
+
+            app.UseTransactionMidware();
 
             app.UseHttpsRedirection();
 
