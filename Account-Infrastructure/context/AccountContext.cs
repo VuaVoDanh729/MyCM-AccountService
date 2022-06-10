@@ -30,7 +30,7 @@ namespace AccountInfrastructure.context
                 a.HasKey(a => a.Id);
                 a.Property(a => a.Id).IsRequired().HasColumnType(_stringType100);
                 a.Property(a => a.Username).IsRequired().HasColumnType(_stringType100);
-                a.Property(a => a.Password).IsRequired().HasColumnType(_stringType100);
+                a.Property(a => a.Password).IsRequired().HasColumnType(_stringType100).IsConcurrencyToken();
                 a.Property(a => a.CreatedDate).IsRequired().HasColumnType(_dateType);
             });
 

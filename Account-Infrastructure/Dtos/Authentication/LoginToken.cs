@@ -15,7 +15,7 @@ namespace Account_Infrastructure.Dtos.Authentication
         public LoginToken(string token, bool isSuccess)
         {
             this.Token = token;
-            this.IsSuccess = IsSuccess;
+            this.IsSuccess = isSuccess;
         }
     }
 }

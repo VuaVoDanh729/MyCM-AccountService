@@ -25,23 +25,68 @@ namespace Account_Infrastructure.Repositories.Account
 
         public async Task<int> AddAccount(AccountModel.models.Account account)
         {
-            _context.Add(account);
-            return await _context.SaveChangesAsync();
-
+            bool checkUsername = _context.Accounts.Any(a => a.Username.Equals(account.Username));
+            if (!checkUsername)
+            {
+                account.Status = AccountModel.enums.ActivityStatus.ACTIVE;
+                _context.Add(account);
+                return await _context.SaveChangesAsync();
+            }
+            return 0;
         }
 
         public async Task<int> ChangePassword(string id, string old, string newPass)
         {
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id.Equals(id) && a.Password.Equals(old));
-            if(account is null)
+            
+            var isDone = 0;
+            if(old.CompareTo(newPass) == 0)
             {
-                return 0;
+                return isDone;
             }
-            else
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                account.Password = newPass;
-                return await _context.SaveChangesAsync();
+                try
+                {
+                    var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id.Equals(id) && a.Password.Equals(old));
+                    if (account is null)
+                    {
+                        isDone = 0;
+                    }
+                    else
+                     {
+                        var accountHistory = new AccountModel.models.AccountHistory
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            AccountId = account.Id,
+                            ModifyDate = DateTime.UtcNow,
+                            OldPassword = account.Password
+                        };
+                        _context.AccountHistories.Add(accountHistory);
+                        account.Password = newPass;
+                        var result = await _context.SaveChangesAsync();
+                        if (result > 0)
+                        {
+                            _context.AccountHistories.Add(new AccountModel.models.AccountHistory
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                AccountId = account.Id,
+                                ModifyDate = DateTime.UtcNow,
+                                OldPassword = old
+                            });
+                            isDone = await _context.SaveChangesAsync();
+                        }
+
+                        if (isDone > 0)
+                        {
+                            transaction.Commit();
+                        }
+                    }
+                }catch(Exception e)
+                {
+                    transaction.Rollback();
+                }
             }
+            return isDone;
         }
 
         public async Task<int> DeleteAccount(string id)
@@ -55,14 +100,13 @@ namespace Account_Infrastructure.Repositories.Account
             {
                 account.Status = 0;
                 return await _context.SaveChangesAsync();
-            }
-                
+            }      
         }
 
         public async Task<PaggingList<AccountViewModel>> ListAccount(int pageIdx, int pageSize)
         {
             var totalRecord = await _context.Accounts.CountAsync();
-            var selectAll = await  _context.Accounts.Skip((pageIdx - 1) * pageSize).Take(pageSize).Select(a => _mapper.Map<AccountViewModel>(a)).ToListAsync();
+            var selectAll = await  _context.Accounts.AsNoTracking().Skip((pageIdx - 1) * pageSize).Take(pageSize).Select(a => _mapper.Map<AccountViewModel>(a)).ToListAsync();
 
             var result = selectAll.Select(a => _mapper.Map<AccountViewModel>(a)).ToList();
             return new PaggingList<AccountViewModel>(pageIdx, pageSize, totalRecord, result);
@@ -74,9 +118,24 @@ namespace Account_Infrastructure.Repositories.Account
             return _mapper.Map<AccountViewModel>(result);
         }
 
-        public Task<int> UpdateAccount(AccountModel.models.Account account)
+        public async Task<int> UpdateAccount(AccountModel.models.Account account)
         {
-            throw new NotImplementedException();
+            var acc = await _context.Accounts.FirstOrDefaultAsync(a => a.Id.Equals(account.Id));
+            if (acc == null)
+            {
+                return 0;
+            }
+            else
+            {
+                acc.Username = account.Username;
+                acc.AccountHistories.Add(new AccountModel.models.AccountHistory
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    AccountId = account.Id,
+                    ModifyDate = DateTime.UtcNow
+                });
+                return await _context.SaveChangesAsync();
+            }
         }
     }
 }
